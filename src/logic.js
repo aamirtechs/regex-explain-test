@@ -79,7 +79,7 @@ function explainRegex(pattern) {
       continue;
     }
     if (c === ")") { i++; segments.push({ token: ")", explanation: "end of the group" }); continue; }
-    if (c === "|") { i++; segments.push({ token: "|", explanation: "OR: match the left side or the right side" }); continue; }
+    if (c === "|") { i++; segments.push({ token: "|", explanation: "OR: match the left side or the right side; concatenation and quantifiers take precedence over OR, while parentheses limit the choice to the enclosing group" }); continue; }
     if (c === "^") { i++; segments.push({ token: "^", explanation: "the start of the line or string (anchor)" }); continue; }
     if (c === "$") { i++; segments.push({ token: "$", explanation: "the end of the line or string (anchor)" }); continue; }
     if (c === ".") { i++; pushWithQuant(".", "any single character except a newline"); continue; }
