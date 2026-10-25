@@ -29,6 +29,17 @@ test("explains escapes, optional and named groups", () => {
   assert.match(text, /literal dot/);
 });
 
+test("explains grouped alternation precedence without changing tokens", () => {
+  for (const group of ["(", "(?:", "(?<choice>"]) {
+    const segs = L.explainRegex("^x" + group + "ab|cd+)y$");
+    assert.deepEqual(segs.map((s) => s.token), ["^", "x", group, "a", "b", "|", "c", "d", ")", "y", "$"], group);
+    const alternation = segs.find((s) => s.token === "|");
+    assert.match(alternation.explanation, /concatenation and quantifiers take precedence over OR/, group);
+    assert.match(alternation.explanation, /parentheses limit the choice to the enclosing group/, group);
+    assert.match(segs.find((s) => s.token === "d").explanation, /one or more times/, group);
+  }
+});
+
 test("bulk per-line matching with pass and fail split", () => {
   const out = L.testLines("^\\d+$", "", "123\nabc\n456");
   assert.equal(out.error, null);
